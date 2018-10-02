@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route method="POST" url="/V1/angel-auction/bid">
+		<service class="Angel\Auction\Api\BidManagementInterface" method="postBid"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/angel-auction/autobid">
+		<service class="Angel\Auction\Api\AutoBidManagementInterface" method="postAutoBid"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/angel-auction/cancelbid">
+		<service class="Angel\Auction\Api\CancelBidManagementInterface" method="postCancelBid"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/angel-auction/watchlist">
+		<service class="Angel\Auction\Api\WatchListManagementInterface" method="postWatchList"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/angel-auction/removewatchlist">
+		<service class="Angel\Auction\Api\RemoveWatchListManagementInterface" method="postRemoveWatchList"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/angel-auction/getinformation">
+		<service class="Angel\Auction\Api\GetInformationManagementInterface" method="getGetInformation"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+</routes>

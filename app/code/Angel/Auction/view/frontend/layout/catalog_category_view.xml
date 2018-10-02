@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+		<css src="Angel_Auction::css/countdown/timebox.css"/>
+	</head>
+	<body>
+		<referenceBlock name="category.product.type.details.renderers">
+			<block as="auction" class="Angel\Auction\Block\Product\Renderer\Listing\Auction" name="product.renderer.listing.auction" template="Angel_Auction::product/renderer/listing/auction.phtml"/>
+		</referenceBlock>
+	</body>
+</page>

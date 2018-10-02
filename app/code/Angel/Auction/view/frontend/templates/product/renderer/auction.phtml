@@ -1,0 +1,10 @@
+<?php
+/**
+ * @var $block \Angel\Auction\Block\Product\Renderer\Auction
+ */
+?>
+<ul class="auction-container">
+    <li data-mage-init='{"angel/countdown": {"time_left":<?= $block->getTimeLeft() ?>}}'></li>
+    <li><div class="left-title"><span><?= __('Current Bid') ?>: </span></div><div><?= $block->getCurrentBidPriceFormated() ?></div></li>
+</ul>
+

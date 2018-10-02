@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Angel\Auction\Api\BidRepositoryInterface" type="Angel\Auction\Model\BidRepository"/>
+	<preference for="Angel\Auction\Api\Data\BidInterface" type="Angel\Auction\Model\Bid"/>
+	<preference for="Angel\Auction\Api\Data\BidSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Angel\Auction\Model\ResourceModel\Bid\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">angel_auction_bid</argument>
+			<argument name="resourceModel" xsi:type="string">Angel\Auction\Model\ResourceModel\Bid\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="angel_auction_bid_listing_data_source" xsi:type="string">Angel\Auction\Model\ResourceModel\Bid\Grid\Collection</item>
+				<item name="angel_auction_autobid_listing_data_source" xsi:type="string">Angel\Auction\Model\ResourceModel\AutoBid\Grid\Collection</item>
+				<item name="angel_auction_watchlist_listing_data_source" xsi:type="string">Angel\Auction\Model\ResourceModel\WatchList\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+	<virtualType name="Angel\Auction\Model\ResourceModel\AutoBid\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">angel_auction_autobid</argument>
+			<argument name="resourceModel" xsi:type="string">Angel\Auction\Model\ResourceModel\AutoBid\Collection</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="Angel\Auction\Model\ResourceModel\WatchList\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">angel_auction_watchlist</argument>
+			<argument name="resourceModel" xsi:type="string">Angel\Auction\Model\ResourceModel\WatchList\Collection</argument>
+		</arguments>
+	</virtualType>
+</config>

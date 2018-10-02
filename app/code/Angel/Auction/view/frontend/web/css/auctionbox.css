@@ -1,0 +1,15 @@
+ul.auction-container{
+    padding-left: 0;
+}
+
+ul.auction-container li{
+     list-style: none;
+ }
+
+ul.auction-container li div{
+    display: inline-block;
+}
+
+ul.auction-container .left-title{
+    font-weight: bold;
+}
