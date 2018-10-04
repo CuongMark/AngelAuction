@@ -75,7 +75,7 @@ class InstallSchema implements InstallSchemaInterface
             'created_time',
             \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
             null,
-            [],
+            ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT],
             'Create Time'
         );
 
@@ -141,7 +141,7 @@ class InstallSchema implements InstallSchemaInterface
             'created_time',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             null,
-            [],
+            ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT],
             'created_time'
         );
 

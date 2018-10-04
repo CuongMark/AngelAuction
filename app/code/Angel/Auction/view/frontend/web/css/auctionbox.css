@@ -12,4 +12,5 @@ ul.auction-container li div{
 
 ul.auction-container .left-title{
     font-weight: bold;
+    min-width: 25%;
 }

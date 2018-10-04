@@ -8,6 +8,12 @@ use Angel\Auction\Api\Data\BidInterface;
 class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
 {
 
+    const BID_PENDING = 0;
+    const BID_WON = 1;
+    const BID_LOSE = 2;
+    const BID_BOUGHT = 3;
+    const BID_CANCELED = 4;
+
     protected $_eventPrefix = 'angel_auction_bid';
 
     /**

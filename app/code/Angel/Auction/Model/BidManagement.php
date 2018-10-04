@@ -3,7 +3,7 @@
 
 namespace Angel\Auction\Model;
 
-class BidManagement implements Angel\Auction\Api\BidManagementInterface
+class BidManagement implements \Angel\Auction\Api\BidManagementInterface
 {
 
     /**

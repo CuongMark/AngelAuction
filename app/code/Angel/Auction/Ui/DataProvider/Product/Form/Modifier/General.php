@@ -85,7 +85,7 @@ class General extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
                 $auctionStatusFieldPath . self::META_CONFIG_PATH,
                 $meta,
                 [
-                    'disabled' => true,
+                    'disabled' => false,
                 ]
             );
         }

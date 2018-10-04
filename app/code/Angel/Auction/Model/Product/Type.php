@@ -12,6 +12,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\EntityManager\MetadataPool;
+use Angel\Auction\Model\Bid;
 
 /**
  * Auction Type Model
@@ -30,6 +31,14 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
 
     const START_TIME_FIELD = 'auction_start_time';
     const END_TIME_FIELD = 'auction_end_time';
+    const STATUS_FIELD = 'auction_status';
+    const MIN_INTERVAL_FIELD = 'auction_min_interval';
+    const MAX_INTERVAL_FIELD = 'auction_max_interval';
+
+    /**
+     * @var \Angel\Auction\Model\ResourceModel\Bid\CollectionFactory
+     */
+    protected $bidCollectionFactory;
 
     public function __construct(
         \Magento\Catalog\Model\Product\Option $catalogProductOption,
@@ -40,7 +49,8 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\Registry $coreRegistry,
         \Psr\Log\LoggerInterface $logger,
-        ProductRepositoryInterface $productRepository, $serializer = null
+        ProductRepositoryInterface $productRepository,
+        $serializer = null
     ){
         parent::__construct($catalogProductOption, $eavConfig, $catalogProductType, $eventManager, $fileStorageDb, $filesystem, $coreRegistry, $logger, $productRepository, $serializer);
     }
@@ -90,5 +100,31 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
 
     }
 
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @return boolean
+     */
+    public function isProcessing($product){
+        return $product->getData(self::STATUS_FIELD) == Attribute\Source\Status::PROCESSING;
+    }
 
+    /**
+     * @param $product
+     * @return \Angel\Auction\Model\Bid|\Magento\Framework\DataObject
+     */
+    public function getLastestBid($product){
+        return $this->getBids($product)->getFirstItem();
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
+     */
+    public function getBids($product){
+        /** @var \Angel\Auction\Model\ResourceModel\Bid\Collection $bidCollection */
+        $bidCollection = $this->bidCollectionFactory->create();
+        return $bidCollection->addFieldToFilter(Bid::PRODUCT_ID, $product->getId())
+            ->addFieldToFilter(Bid::STATUS, Bid::BID_PENDING)
+            ->addOrder(Bid::BID_ID);
+    }
 }
