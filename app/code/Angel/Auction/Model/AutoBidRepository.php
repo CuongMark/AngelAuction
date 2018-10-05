@@ -76,6 +76,7 @@ class AutoBidRepository implements AutoBidRepositoryInterface
             $autoBid->setStoreId($storeId);
         } */
         try {
+            $autoBid->setCreatedTime('2018/10/05 00:00:00');
             $this->resource->save($autoBid);
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__(

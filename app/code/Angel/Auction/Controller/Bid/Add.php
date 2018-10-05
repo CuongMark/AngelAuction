@@ -72,16 +72,17 @@ class Add extends \Angel\Auction\Controller\Bid\Bid
         }
 
         $lastestBid = $this->auction->getLastestBid();
-        if ($lastestBid->getId() && $lastestBid->getCustomerId() == $customer->getId()){
+        if ($lastestBid->getId() && $lastestBid->getCustomerId() == $customer->getId() && !$this->getRequest()->getParam('isAutoBid')){
             return $result->setData(['error' => __('You are the hightest bid!')]);
         }
 
         if ($this->getRequest()->getParam('isAutoBid')) {
-            $this->auction->createNewAutoBid($customer, $price);
+            $this->auction->createNewAutoBid($customer->getId(), $price);
         } else {
-            $this->auction->createNewBid($customer, $price);
+            $this->auction->createNewBid($customer->getId(), $price);
         }
 
-        return $result->setData(['success' => __('You placed a bid!')]);
+        $this->auction->checkAutoBid();
+        return $result->setData(['success' => __('You placed a bid success')]);
     }
 }

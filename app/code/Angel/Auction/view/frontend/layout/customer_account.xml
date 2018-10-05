@@ -2,7 +2,39 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 	<body>
 		<referenceContainer name="customer_account_navigation">
-			<block as="customer_account" class="Angel\Auction\Block\Customer\Account" name="customer.account" template="Angel_Auction::customer/account.phtml"/>
+			<block class="Magento\Customer\Block\Account\Delimiter" name="customer-account-navigation-delimiter-3" template="Magento_Customer::account/navigation-delimiter.phtml">
+				<arguments>
+					<argument name="sortOrder" xsi:type="number">9</argument>
+				</arguments>
+			</block>
+			<!--<block class="Magento\Customer\Block\Account\SortLinkInterface" name="customer-account-navigation-play-list">-->
+				<!--<arguments>-->
+					<!--<argument name="path" xsi:type="string">auction/index/playlist</argument>-->
+					<!--<argument name="label" xsi:type="string" translate="true">My Auction Play List</argument>-->
+					<!--<argument name="sortOrder" xsi:type="number">6</argument>-->
+				<!--</arguments>-->
+			<!--</block>-->
+			<block class="Magento\Customer\Block\Account\SortLinkInterface" name="customer-account-navigation-bid-list">
+				<arguments>
+					<argument name="path" xsi:type="string">auction/bid/lists</argument>
+					<argument name="label" xsi:type="string" translate="true">My Bids</argument>
+					<argument name="sortOrder" xsi:type="number">5</argument>
+				</arguments>
+			</block>
+			<block class="Magento\Customer\Block\Account\SortLinkInterface" name="customer-account-navigation-autobid-list">
+				<arguments>
+					<argument name="path" xsi:type="string">auction/autobid/lists</argument>
+					<argument name="label" xsi:type="string" translate="true">My Autobids</argument>
+					<argument name="sortOrder" xsi:type="number">4</argument>
+				</arguments>
+			</block>
+			<block class="Magento\Customer\Block\Account\SortLinkInterface" name="customer-account-navigation-watch-list">
+				<arguments>
+					<argument name="path" xsi:type="string">auction/watchlist/index</argument>
+					<argument name="label" xsi:type="string" translate="true">My Watch List</argument>
+					<argument name="sortOrder" xsi:type="number">3</argument>
+				</arguments>
+			</block>
 		</referenceContainer>
 	</body>
 </page>

@@ -76,7 +76,7 @@ define([
 
                 /** @inheritdoc */
                 success: function (res) {
-                    window.location.href = window.location.href;
+                    // window.location.href = window.location.href;
                     console.log(res);
                 }
             });

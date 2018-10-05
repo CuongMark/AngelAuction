@@ -1,0 +1,43 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+/** @var \Angel\Auction\Block\Bid\Lists $block */
+?>
+<?php $bids = $block->getAutoBids(); ?>
+<?php if ($bids && count($bids)): ?>
+    <div class="table-wrapper orders-history">
+        <table class="data table table-order-items history" id="my-tickets-table">
+            <caption class="table-caption"><?= /* @escapeNotVerified */ __('Tickets') ?></caption>
+            <thead>
+            <tr>
+                <th scope="col" class="col name"><?= /* @escapeNotVerified */ __('Auction') ?></th>
+                <th scope="col" class="col price"><?= /* @escapeNotVerified */ __('Bid Price') ?></th>
+                <th scope="col" class="col created_at"><?= /* @escapeNotVerified */ __('Created At') ?></th>
+                <th scope="col" class="col status"><?= /* @escapeNotVerified */ __('Status') ?></th>
+                <th scope="col" class="col actions"><?= /* @escapeNotVerified */ __('Action') ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php /** @var \Angel\Auction\Model\AutoBid $bid */ ?>
+            <?php foreach ($bids as $bid): ?>
+                <tr>
+                    <td data-th="<?= $block->escapeHtml(__('Name')) ?>" class="col id"><a href="<?= $block->getUrl('catalog/product/view', ['id'=> $bid->getProductId()]) ?>" ><?= /* @escapeNotVerified */ $bid->getName() ?></a></td>
+                    <td data-th="<?= $block->escapeHtml(__('Bid Price')) ?>" class="col total"><?= /* @escapeNotVerified */ $block->formatPrice($bid->getPrice()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Created At')) ?>" class="col date"><?= /* @escapeNotVerified */ $block->formatDate($bid->getCreatedTime(), 2 , true) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status"><?= /* @escapeNotVerified */ $bid->getStatusLabel() ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions"></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php if ($block->getPagerHtml()): ?>
+        <div class="order-products-toolbar toolbar bottom"><?= $block->getPagerHtml() ?></div>
+    <?php endif ?>
+<?php else: ?>
+    <div class="message info empty"><span><?= /* @escapeNotVerified */ __('You have not purchased any tickets.') ?></span></div>
+<?php endif ?>

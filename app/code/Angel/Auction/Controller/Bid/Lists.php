@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Angel\Auction\Controller\MyAutobid;
+namespace Angel\Auction\Controller\Bid;
 
-class Index extends \Magento\Framework\App\Action\Action
+class Lists extends \Magento\Framework\App\Action\Action
 {
 
     protected $resultPageFactory;

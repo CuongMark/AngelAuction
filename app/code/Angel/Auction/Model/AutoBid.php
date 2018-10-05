@@ -8,7 +8,22 @@ use Angel\Auction\Api\Data\AutoBidInterface;
 class AutoBid extends \Magento\Framework\Model\AbstractModel implements AutoBidInterface
 {
 
+    const BID_PENDING = 0;
+    const BID_CANCELED = 1;
+
     protected $_eventPrefix = 'angel_auction_autobid';
+
+
+    public function getStatusLabel(){
+        switch ($this->getStatus()){
+            case static::BID_PENDING:
+                return __('Pending');
+            case static::BID_CANCELED:
+                return __('Canceled');
+            default:
+                return __('Pending');
+        }
+    }
 
     /**
      * @return void
@@ -77,7 +92,7 @@ class AutoBid extends \Magento\Framework\Model\AbstractModel implements AutoBidI
 
     /**
      * Get price
-     * @return string
+     * @return float
      */
     public function getPrice()
     {

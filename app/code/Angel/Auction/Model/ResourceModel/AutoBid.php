@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Angel\Auction\Model\ResourceModel;
 
 class AutoBid extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
@@ -9,7 +8,7 @@ class AutoBid extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Auction Autobid relation table name
      */
-    const TABLE_NAME = 'catalog_url_rewrite_product_category';
+    const TABLE_NAME = 'angel_auction_autobid';
 
     /**
      * Define resource model

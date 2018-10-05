@@ -73,10 +73,10 @@ class InstallSchema implements InstallSchemaInterface
 
         $table_angel_auction_bid->addColumn(
             'created_time',
-            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
             null,
             ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT],
-            'Create Time'
+            'Creation Time'
         );
 
         $table_angel_auction_bid->addColumn(
@@ -139,10 +139,10 @@ class InstallSchema implements InstallSchemaInterface
 
         $table_angel_auction_autobid->addColumn(
             'created_time',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
             null,
             ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT],
-            'created_time'
+            'Creation Time'
         );
 
         $table_angel_auction_autobid->addColumn(

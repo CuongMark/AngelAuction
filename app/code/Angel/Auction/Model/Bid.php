@@ -7,7 +7,6 @@ use Angel\Auction\Api\Data\BidInterface;
 
 class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
 {
-
     const BID_PENDING = 0;
     const BID_WON = 1;
     const BID_LOSE = 2;
@@ -22,6 +21,23 @@ class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
     protected function _construct()
     {
         $this->_init(\Angel\Auction\Model\ResourceModel\Bid::class);
+    }
+
+    public function getStatusLabel(){
+        switch ($this->getStatus()){
+            case static::BID_PENDING:
+                return __('Pending');
+            case static::BID_WON:
+                return __('Won');
+            case static::BID_LOSE:
+                return __('Lose');
+            case static::BID_BOUGHT:
+                return __('Bought');
+            case static::BID_CANCELED:
+                return __('Won');
+            default:
+                return __('Pending');
+        }
     }
 
     /**

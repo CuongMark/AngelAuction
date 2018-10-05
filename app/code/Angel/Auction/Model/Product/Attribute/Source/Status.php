@@ -9,6 +9,7 @@ class Status extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
     const PROCESSING = 1;
     const FINISHED = 2;
     const CANCEL = 3;
+    const FALSE = 4;
 
     /**
      * @var \Magento\Eav\Model\ResourceModel\Entity\AttributeFactory

@@ -3,6 +3,8 @@
 
 namespace Angel\Auction\Model;
 
+use Angel\Auction\Model\Product\Type;
+
 class Auction
 {
     const INIT_PRICE_FIELD = 'auction_init_price';
@@ -31,19 +33,29 @@ class Auction
     protected $bidCollectionFactory;
 
     /**
-     * @var BidFactory
+     * @var AutoBidFactory
      */
     protected $autoBidFactory;
 
     /**
-     * @var BidRepository
+     * @var AutoBidRepository
      */
     protected $autoBidRepository;
 
     /**
-     * @var ResourceModel\Bid\CollectionFactory
+     * @var ResourceModel\AutoBid\CollectionFactory
      */
     protected $autoBidCollectionFactory;
+
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     */
+    protected $productCollectionFactory;
+
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
+    protected $productRepository;
 
     public function __construct(
         \Angel\Auction\Model\ResourceModel\Bid\CollectionFactory $bidCollectionFactory,
@@ -51,7 +63,9 @@ class Auction
         \Angel\Auction\Model\BidRepository $bidRepository,
         \Angel\Auction\Model\ResourceModel\AutoBid\CollectionFactory $autoBidCollectionFactory,
         \Angel\Auction\Model\AutoBidFactory $autoBidFactory,
-        \Angel\Auction\Model\AutoBidRepository $autoBidRepository
+        \Angel\Auction\Model\AutoBidRepository $autoBidRepository,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
+        \Magento\Catalog\Model\ProductRepository $productRepository
     ){
         $this->bidCollectionFactory = $bidCollectionFactory;
         $this->bidFactory = $bidFactory;
@@ -59,10 +73,13 @@ class Auction
         $this->autoBidCollectionFactory = $autoBidCollectionFactory;
         $this->autoBidFactory = $autoBidFactory;
         $this->autoBidRepository = $autoBidRepository;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->productRepository = $productRepository;
     }
 
     public function init($product){
         $this->product = $product;
+        return $this;
     }
 
 
@@ -106,49 +123,165 @@ class Auction
     }
 
     /**
-     * @param \Magento\Catalog\Model\Product $product
      * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
      */
-    public function getBids($product){
+    public function getBids(){
         /** @var \Angel\Auction\Model\ResourceModel\Bid\Collection $bidCollection */
         $bidCollection = $this->bidCollectionFactory->create();
-        return $bidCollection->addFieldToFilter(Bid::PRODUCT_ID, $product->getId())
+        return $bidCollection->addFieldToFilter(Bid::PRODUCT_ID, $this->getProduct()->getId())
             ->addFieldToFilter(Bid::STATUS, Bid::BID_PENDING)
             ->addOrder(Bid::BID_ID);
     }
 
+    /**
+     * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
+     */
+    public function getAutoBids(){
+        /** @var \Angel\Auction\Model\ResourceModel\AutoBid\Collection $bidCollection */
+        $autoBidCollection = $this->autoBidCollectionFactory->create();
+        return $autoBidCollection->addFieldToFilter(AutoBid::PRODUCT_ID, $this->getProduct()->getId())
+            ->addFieldToFilter(AutoBid::STATUS, AutoBid::BID_PENDING)
+            ->addOrder(AutoBid::PRICE);
+    }
 
     /**
-     * @param \Magento\Customer\Model\Customer $customer
+     * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
+     */
+    public function getAvaiableAutoBid(){
+        return $this->getAutoBids()->addFieldToFilter(AutoBid::PRICE, ['gt' => $this->getCurrentBidPrice()]);
+    }
+
+
+    /**
+     * @param int $customerId
      * @param float $price
      * @return \Angel\Auction\Api\Data\BidInterface
      */
-    public function createNewBid($customer, $price){
+    public function createNewBid($customerId, $price){
         /** @var Bid $bid */
         $bid = $this->bidFactory->create();
         $bid->setProductId($this->getProduct()->getId())
-            ->setCustomerId($customer->getId())
+            ->setCustomerId($customerId)
             ->setPrice($price)
             ->setStatus(Bid::BID_PENDING);
         return $this->bidRepository->save($bid);
     }
 
     /**
-     * @param \Magento\Customer\Model\Customer $customer
+     * @param int $customerId
      * @param float $price
      * @return \Angel\Auction\Api\Data\AutoBidInterface
      */
-    public function createNewAutoBid($customer, $price){
-        /** @var AutoBid $bid */
+    public function createNewAutoBid($customerId, $price){
+        /** @var AutoBid $autobid */
         $autobid = $this->autoBidFactory->create();
         $autobid->setProductId($this->getProduct()->getId())
-            ->setCustomerId($customer->getId())
+            ->setCustomerId($customerId)
             ->setPrice($price)
-            ->setStatus();
-        return $this->autoBidFactory->save($autobid);
+            ->setStatus(AutoBid::BID_PENDING);
+        return $this->autoBidRepository->save($autobid);
     }
 
-    public function checkAutoBid($customer, $price){
+    /**
+     * @return \Angel\Auction\Api\Data\BidInterface|bool
+     */
+    public function checkAutoBid(){
+        $lastBid = $this->getLastestBid();
+        $autoBids = $this->getAvaiableAutoBid();
+        if (!$autoBids->getSize()){
+            return false;
+        } else if ($autoBids->getSize() == 1){
+            /** @var AutoBid $lastAutobid */
+            $lastAutobid = $autoBids->getFirstItem();
+            if (!$lastBid->getId() || $lastBid->getCustomerId() != $lastAutobid->getCustomerId()){
+                $price = min($this->getNextMinBidPrice(), $lastAutobid->getPrice());
+                return $this->createNewBid($lastAutobid->getCustomerId(), $price);
+            } else {
+                return false;
+            }
+        } else if ($autoBids->getSize() == 2){
+            /** @var AutoBid $autoBidBiger */
+            $autoBidBiger = $autoBids->getFirstItem();
+            /** @var AutoBid $autoBidSmaller */
+            $autoBidSmaller = $autoBids->getLastItem();
+            if ($autoBidBiger->getPrice() == $autoBidSmaller->getPrice()){
+                if ($autoBidBiger->getId() > $autoBidSmaller->getPrice()){
+                    return $this->createNewBid($autoBidSmaller->getCustomerId(), $autoBidSmaller->getPrice());
+                } else {
+                    return $this->createNewBid($autoBidBiger->getCustomerId(), $autoBidBiger->getPrice());
+                }
+            }
+            $this->createNewBid($autoBidSmaller->getCustomerId(), $autoBidSmaller->getPrice());
+            $price = min( (float)$autoBidSmaller->getPrice() + (float)$this->getProduct()->getData(self::MIN_INTERVAL_FIELD), $autoBidBiger->getPrice());
+            return $this->createNewBid($autoBidBiger->getCustomerId(), $price);
+        } else {
+            return false;
+        }
+    }
 
+    /**
+     * @param \Magento\Catalog\Model\Product|null $product
+     * @return \Magento\Catalog\Model\Product|null
+     */
+    public function updateStatus($product = null){
+        if (!$product) {
+            $product = $this->getProduct();
+        }
+        if (!$product || $product->getTypeId() != Product\Type::TYPE_CODE){
+            return null;
+        }
+        $now = new \DateTime();
+        $start = new \DateTime($product->getData(self::START_TIME_FIELD));
+        $end = new \DateTime($product->getData(self::END_TIME_FIELD));
+        switch ($product->getData(Product\Type::STATUS_FIELD)){
+            case Product\Attribute\Source\Status::NOT_START:
+                if ($now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()){
+                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::PROCESSING);
+                    return $this->productRepository->save($product);
+                } else if ($now->getTimestamp() >= $end->getTimestamp()){
+                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED);
+                    return $this->productRepository->save($product);
+                }
+                return $product;
+            case Product\Attribute\Source\Status::PROCESSING:
+                if ($now->getTimestamp() >= $end->getTimestamp()){
+                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED);
+                    $this->productRepository->save($product);
+
+                    $bid = $this->getLastestBid();
+                    if ($bid->getId()) {
+                        $bid->setStatus(Bid::BID_WON);
+                        $this->bidRepository->save($bid);
+                    }
+
+
+                    $bids = $this->getBids();
+                    /** @var Bid $_bid */
+                    foreach ($bids as $_bid){
+                        if ($_bid->getId() != $bid->getId()){
+                            $_bid->setStatus(Bid::BID_LOSE);
+                            $this->bidRepository->save($_bid);
+                        }
+                    }
+                }
+                return $product;
+            case Product\Attribute\Source\Status::FINISHED:
+                return $product;
+            case Product\Attribute\Source\Status::CANCEL:
+                return $product;
+            case Product\Attribute\Source\Status::FALSE:
+                return $product;
+            default:
+                return $product;
+        }
+    }
+
+    public function massUpdateStatus(){
+        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $auctionProductCollection */
+        $auctionProductCollection = $this->productCollectionFactory->create()->addAttributeToFilter('type_id', Product\Type::TYPE_CODE)
+            ->addAttributeToFilter(self::STATUS_FIELD, ['in' => [Product\Attribute\Source\Status::NOT_START, Product\Attribute\Source\Status::PROCESSING]]);
+        foreach ($auctionProductCollection as $_auctionProduct){
+            $this->updateStatus($_auctionProduct);
+        }
     }
 }

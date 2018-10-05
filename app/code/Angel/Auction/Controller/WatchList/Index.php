@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Angel\Auction\Controller\MyWatchList;
+namespace Angel\Auction\Controller\WatchList;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
