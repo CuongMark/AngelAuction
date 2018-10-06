@@ -3,5 +3,9 @@
  * @var $block \Angel\Auction\Block\Product\Renderer\Auction
  */
 ?>
-<div data-mage-init='{"angel/countdown": {"time_left":<?php echo $block->getTimeLeft() ?>}}'></div>
-<div><?= $block->getCurrentBidPriceFormated() ?></div>
+<div class="category-auction-box">
+    <?php if ($block->isProcessing()): ?>
+        <div data-mage-init='{"angel/countdown": {"time_left":<?= $block->getTimeLeft() ?>}}'></div>
+    <?php endif; ?>
+    <?= $block->getCurrentBidPriceFormated() ?>
+</div>

@@ -9,6 +9,7 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Ui\Component\Form;
 use Magento\Framework\Stdlib\ArrayManager;
+use Angel\Auction\Model\Auction;
 
 /**
  * Data provider for main panel of product page
@@ -63,8 +64,18 @@ class General extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
      */
     public function modifyMeta(array $meta)
     {
+        $product = $this->locator->getProduct();
+        if ($product->getTypeId() != \Angel\Auction\Model\Product\Type::TYPE_CODE) {
+            return $meta;
+        }
         $meta = $this->customizeNewDateRangeField($meta);
         $meta = $this->customizeAuctionStatusField($meta);
+        if ($product->getData(Auction::STATUS_FIELD) != \Angel\Auction\Model\Product\Attribute\Source\Status::NOT_START){
+            $this->customizeAuctionStartTimeField($meta);
+        }
+        if ($product->getData(Auction::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::FINISHED){
+            $this->customizeAuctionEndTimeField($meta);
+        }
         return $meta;
     }
 
@@ -77,8 +88,53 @@ class General extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
      */
     protected function customizeAuctionStatusField(array $meta)
     {
-        $fromField = 'auction_status';
+        $fromField = Auction::STATUS_FIELD;
+        $auctionStatusFieldPath = $this->arrayManager->findPath($fromField, $meta, null, 'children');
+        if ($auctionStatusFieldPath){
+            $meta = $this->arrayManager->merge(
+                $auctionStatusFieldPath . self::META_CONFIG_PATH,
+                $meta,
+                [
+                    'disabled' => true,
+                ]
+            );
+        }
+        return $meta;
+    }
 
+    /**
+     * Customize Status field
+     *
+     * @param array $meta
+     * @return array
+     * @since 101.0.0
+     */
+    protected function customizeAuctionStartTimeField(array $meta)
+    {
+        $fromField = Auction::START_TIME_FIELD;
+        $auctionStatusFieldPath = $this->arrayManager->findPath($fromField, $meta, null, 'children');
+        if ($auctionStatusFieldPath){
+            $meta = $this->arrayManager->merge(
+                $auctionStatusFieldPath . self::META_CONFIG_PATH,
+                $meta,
+                [
+                    'disabled' => true,
+                ]
+            );
+        }
+        return $meta;
+    }
+
+    /**
+     * Customize Status field
+     *
+     * @param array $meta
+     * @return array
+     * @since 101.0.0
+     */
+    protected function customizeAuctionEndTimeField(array $meta)
+    {
+        $fromField = Auction::END_TIME_FIELD;
         $auctionStatusFieldPath = $this->arrayManager->findPath($fromField, $meta, null, 'children');
         if ($auctionStatusFieldPath){
             $meta = $this->arrayManager->merge(

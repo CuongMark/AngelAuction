@@ -57,6 +57,11 @@ class Auction
      */
     protected $productRepository;
 
+    /**
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $customerSession;
+
     public function __construct(
         \Angel\Auction\Model\ResourceModel\Bid\CollectionFactory $bidCollectionFactory,
         \Angel\Auction\Model\BidFactory $bidFactory,
@@ -65,7 +70,8 @@ class Auction
         \Angel\Auction\Model\AutoBidFactory $autoBidFactory,
         \Angel\Auction\Model\AutoBidRepository $autoBidRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Model\ProductRepository $productRepository
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Magento\Customer\Model\Session $customerSession
     ){
         $this->bidCollectionFactory = $bidCollectionFactory;
         $this->bidFactory = $bidFactory;
@@ -75,6 +81,7 @@ class Auction
         $this->autoBidRepository = $autoBidRepository;
         $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
+        $this->customerSession = $customerSession;
     }
 
     public function init($product){
@@ -92,6 +99,36 @@ class Auction
      */
     public function isProcessing(){
         return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::PROCESSING;
+    }
+
+    public function isFinished(){
+        return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::FINISHED;
+    }
+
+    public function isNotStart(){
+        return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::NOT_START;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWinner($customerId = null){
+        $winningBid = $this->getWinningBid();
+        if (!$customerId){
+            $customerId = $this->customerSession->getCustomerId();
+        }
+        return $winningBid->getId() && $winningBid->getCustomerId() == $customerId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHightest($customerId = null){
+        $lastBid = $this->getLastestBid();
+        if (!$customerId){
+            $customerId = $this->customerSession->getCustomerId();
+        }
+        return $lastBid->getId() && $lastBid->getCustomerId() == $customerId;
     }
 
     /**
@@ -119,7 +156,7 @@ class Auction
      * @return \Angel\Auction\Model\Bid|\Magento\Framework\DataObject
      */
     public function getLastestBid(){
-        return $this->getBids($this->product)->getFirstItem();
+        return $this->getBids()->getFirstItem();
     }
 
     /**
@@ -129,15 +166,29 @@ class Auction
         /** @var \Angel\Auction\Model\ResourceModel\Bid\Collection $bidCollection */
         $bidCollection = $this->bidCollectionFactory->create();
         return $bidCollection->addFieldToFilter(Bid::PRODUCT_ID, $this->getProduct()->getId())
-            ->addFieldToFilter(Bid::STATUS, Bid::BID_PENDING)
+            ->addFieldToFilter(Bid::STATUS, ['neq' => Bid::BID_CANCELED])
             ->addOrder(Bid::BID_ID);
     }
 
     /**
-     * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
+     * @return \Angel\Auction\Model\Bid|\Magento\Framework\DataObject
+     */
+    public function getWinningBid(){
+        /** @var \Angel\Auction\Model\ResourceModel\Bid\Collection $bidCollection */
+        $bidCollection = $this->bidCollectionFactory->create();
+        return $bidCollection->addFieldToFilter(Bid::PRODUCT_ID, $this->getProduct()->getId())
+            ->addFieldToFilter(Bid::STATUS, Bid::BID_WON)
+            ->addOrder(Bid::BID_ID)
+            ->setCurPage(1)
+            ->setPageSize(1)
+            ->getFirstItem();
+    }
+
+    /**
+     * @return \Angel\Auction\Model\ResourceModel\AutoBid\Collection
      */
     public function getAutoBids(){
-        /** @var \Angel\Auction\Model\ResourceModel\AutoBid\Collection $bidCollection */
+        /** @var \Angel\Auction\Model\ResourceModel\AutoBid\Collection $autoBidCollection */
         $autoBidCollection = $this->autoBidCollectionFactory->create();
         return $autoBidCollection->addFieldToFilter(AutoBid::PRODUCT_ID, $this->getProduct()->getId())
             ->addFieldToFilter(AutoBid::STATUS, AutoBid::BID_PENDING)
@@ -145,7 +196,7 @@ class Auction
     }
 
     /**
-     * @return \Angel\Auction\Model\ResourceModel\Bid\Collection
+     * @return \Angel\Auction\Model\ResourceModel\AutoBid\Collection
      */
     public function getAvaiableAutoBid(){
         return $this->getAutoBids()->addFieldToFilter(AutoBid::PRICE, ['gt' => $this->getCurrentBidPrice()]);
@@ -227,13 +278,16 @@ class Auction
         if (!$product) {
             $product = $this->getProduct();
         }
-        if (!$product || $product->getTypeId() != Product\Type::TYPE_CODE){
+        if (!$product || $product->getTypeId()
+            != Product\Type::TYPE_CODE ||
+            !$product->getData(self::STATUS_FIELD) ||
+            !in_array($product->getData(self::STATUS_FIELD),[Product\Attribute\Source\Status::NOT_START, Product\Attribute\Source\Status::PROCESSING])){
             return null;
         }
         $now = new \DateTime();
         $start = new \DateTime($product->getData(self::START_TIME_FIELD));
         $end = new \DateTime($product->getData(self::END_TIME_FIELD));
-        switch ($product->getData(Product\Type::STATUS_FIELD)){
+        switch ($product->getData(self::STATUS_FIELD)){
             case Product\Attribute\Source\Status::NOT_START:
                 if ($now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()){
                     $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::PROCESSING);

@@ -13,6 +13,14 @@
                     <item name="class" xsi:type="string">Angel\Auction\Ui\DataProvider\Product\Form\Modifier\General</item>
                     <item name="sortOrder" xsi:type="number">70</item>
                 </item>
+                <item name="bid" xsi:type="array">
+                    <item name="class" xsi:type="string">Angel\Auction\Ui\DataProvider\Product\Form\Modifier\Bid</item>
+                    <item name="sortOrder" xsi:type="number">75</item>
+                </item>
+                <item name="autobid" xsi:type="array">
+                    <item name="class" xsi:type="string">Angel\Auction\Ui\DataProvider\Product\Form\Modifier\AutoBid</item>
+                    <item name="sortOrder" xsi:type="number">80</item>
+                </item>
             </argument>
         </arguments>
     </virtualType>

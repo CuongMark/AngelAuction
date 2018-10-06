@@ -3,9 +3,6 @@
 	<event name="sales_order_save_after">
 		<observer instance="Angel\Auction\Observer\Sales\OrderSaveAfter" name="angel_auction_observer_sales_ordersaveafter_sales_order_save_after"/>
 	</event>
-	<event name="catalog_controller_category_init_after">
-		<observer instance="Angel\Auction\Observer\Catalog\ControllerCategoryInitAfter" name="angel_auction_observer_catalog_controllercategoryinitafter_catalog_controller_category_init_after"/>
-	</event>
 	<event name="controller_action_catalog_product_save_entity_after">
 		<observer instance="Angel\Auction\Observer\Controller\ActionCatalogProductSaveEntityAfter" name="angel_auction_observer_controller_actioncatalogproductsaveentityafter_controller_action_catalog_product_save_entity_after"/>
 	</event>

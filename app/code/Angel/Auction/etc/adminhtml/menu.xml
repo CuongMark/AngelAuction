@@ -1,10 +1,8 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
 	<menu>
-		<add id="Angel::auction_top_level" module="Angel_Auction" resource="Magento_Backend::content" sortOrder="10" title="Auction"/>
-		<add action="angel_auction/auction/index" id="Angel_Auction::angel_auction" module="Angel_Auction" parent="Angel::auction_top_level" resource="Magento_Backend::content" sortOrder="1" title="Auction"/>
-		<add action="angel_auction/bid/index" id="Angel_Auction::angel_auction_bid" module="Angel_Auction" parent="Angel::auction_top_level" resource="Magento_Backend::content" sortOrder="10" title="Bid"/>
-		<add action="angel_auction/autobid/index" id="Angel_Auction::angel_auction_autobid" module="Angel_Auction" parent="Angel::auction_top_level" resource="Magento_Backend::content" sortOrder="20" title="AutoBid"/>
-		<add action="angel_auction/watchlist/index" id="Angel_Auction::angel_auction_watchlist" module="Angel_Auction" parent="Angel::auction_top_level" resource="Magento_Backend::content" sortOrder="30" title="WatchList"/>
+		<add id="Angel::auction_top_level" module="Angel_Auction" resource="Angel_Auction::auction" sortOrder="10" title="Auction"/>
+		<add action="angel_auction/auction/index" id="Angel_Auction::auction" module="Angel_Auction" parent="Angel::auction_top_level" resource="Angel_Auction::auction" sortOrder="1" title="Auction"/>
+		<add action="admin/system_config/edit/section/auction" id="Angel_Auction::setting" module="Angel_Auction" parent="Angel::auction_top_level" resource="Angel_Auction::config_angel_auction" sortOrder="10" title="Setting"/>
 	</menu>
 </config>

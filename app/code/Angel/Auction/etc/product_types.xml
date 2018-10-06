@@ -6,7 +6,8 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Catalog:etc/product_types.xsd">
-    <type name="auction" label="Auction Product" modelInstance="Angel\Auction\Model\Product\Type" sortOrder="10" isQty="true">
+    <type name="auction" label="Auction Product" modelInstance="Angel\Auction\Model\Product\Type" composite='true' sortOrder="10" isQty="true">
+        <priceModel instance="Angel\Auction\Model\Product\Price" />
         <customAttributes>
             <attribute name="refundable" value="false"/>
         </customAttributes>

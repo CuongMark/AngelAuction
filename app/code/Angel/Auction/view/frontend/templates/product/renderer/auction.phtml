@@ -4,55 +4,59 @@
  */
 ?>
 <ul class="auction-container">
+    <?php if ($block->isProcessing()): ?>
     <li data-mage-init='{"angel/countdown": {"time_left":<?= $block->getTimeLeft() ?>}}'></li>
-    <li><div class="left-title"><span><?= __('Current Bid: ') ?></span> </div><div><?= $block->getCurrentBidPriceFormated() ?></div></li>
+    <?php endif; ?>
+    <li>
+        <div class="left-title"><span><?= __('Current Bid: ') ?></span> </div><div><?= $block->getCurrentBidPriceFormated() ?>
+            <?php if ($block->isHightest()): ?>
+                <?= __('(You)') ?>
+            <?php endif; ?>
+        </div>
+    </li>
     <li><div class="left-title"><span><?= __('Start At: ') ?></span> </div><div><?= $block->getStartTimeFormated() ?></div></li>
     <li><div class="left-title"><span><?= __('Finish At') ?></span> </div><div><?= $block->getEndTimeFormated() ?></div></li>
     <li>
+        <?php if ($block->isBidAble()): ?>
         <div class="actions-primary">
-            <?php if ($block->isBidAble()): ?>
-                <form data-role="bid-form" id="auction_bid_form" action="<?= /* @NoEscape */ $block->getBidUrl() ?>" method="post">
-                    <?= $block->getBlockHtml('formkey') ?>
-                    <div class="control">
-                        <div class="field choice">
-                            <input type="radio" name="isAutoBid" value="0" title="<?php echo __('Standard bid') ?>" class="checkbox" checked="checked">
-                            <label class="label" for="change-password"><span><?php echo __('Standard') ?></span></label>
-                        </div>
-                        <div class="field choice">
-                            <input type="radio" name="isAutoBid" value="1" title="<?php echo __('Auto bid') ?>" class="checkbox">
-                            <label class="label" for="change-password"><span><?php echo __('Autobid') ?></span></label>
-                        </div>
+            <form data-role="bid-form" id="auction_bid_form" action="<?= /* @NoEscape */ $block->getBidUrl() ?>" method="post">
+                <?= $block->getBlockHtml('formkey') ?>
+                <div class="control">
+                    <div class="field choice">
+                        <input type="radio" name="isAutoBid" value="0" title="<?php echo __('Standard bid') ?>" class="checkbox" checked="checked">
+                        <label class="label" for="change-password"><span><?php echo __('Standard') ?></span></label>
                     </div>
-                    <br/>
-                    <span><?= $block->getSuggess() ?></span>
-                    <br/>
-                    <div class="control">
-                        <input type="number"
-                               name="price"
-                               value="<?= /* @escapeNotVerified */ $block->getNextMinBidPrice() * 1 ?>"
-                               title="<?= /* @escapeNotVerified */ __('Bid Price') ?>"
-                               class="input-text bid-price qty"
-                               data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
-                        />
+                    <div class="field choice">
+                        <input type="radio" name="isAutoBid" value="1" title="<?php echo __('Auto bid') ?>" class="checkbox">
+                        <label class="label" for="change-password"><span><?php echo __('Autobid') ?></span></label>
                     </div>
-                    <button type="submit"
-                            title="<?= $block->escapeHtml(__('Bid')) ?>"
-                            class="action tocart primary">
-                        <span><?= /* @escapeNotVerified */ __('Bid') ?></span>
-                    </button>
-                </form>
-            <?php else: ?>
-                <?php if ($block->$block()): ?>
-                    <button type="submit"
-                            title="<?= $block->escapeHtml(__('Login To Bid')) ?>"
-                            class="action tocart primary">
-                        <span><?= /* @escapeNotVerified */ __('Login To Bid') ?></span>
-                    </button>
-                <?php else: ?>
-                    <div class="stock unavailable"><span><?= /* @escapeNotVerified */ __('Not Start') ?></span></div>
-                <?php endif; ?>
-            <?php endif; ?>
+                </div>
+                <br/>
+                <span><?= $block->getSuggess() ?></span>
+                <br/>
+                <div class="control">
+                    <input type="number"
+                           name="price"
+                           value="<?= /* @escapeNotVerified */ $block->getNextMinBidPrice() * 1 ?>"
+                           title="<?= /* @escapeNotVerified */ __('Bid Price') ?>"
+                           class="input-text bid-price qty"
+                           data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
+                    />
+                </div>
+                <button type="submit"
+                        title="<?= $block->escapeHtml(__('Bid')) ?>"
+                        class="action tocart primary">
+                    <span><?= /* @escapeNotVerified */ __('Bid') ?></span>
+                </button>
+            </form>
         </div>
+        <?php elseif($block->isNotStart()): ?>
+            <div class="left-title"><span><?= __('Status:') ?></span> </div><div><?= __('Not Start') ?></div>
+        <?php elseif($block->isFinished()): ?>
+            <div class="left-title"><span><?= __('Status:') ?></span> </div><div><?= __('Finished') ?></div>
+        <?php elseif(!$block->isLoggedIn()): ?>
+            <a href="<?= $block->getUrl('customer/account/login') ?>" title="<?= $block->escapeHtml(__('Login To Bid')) ?>"><span><?= /* @escapeNotVerified */ __('Login To Bid') ?></span></a>
+        <?php endif; ?>
     </li>
 </ul>
 <script type="text/x-magento-init">

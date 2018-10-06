@@ -33,11 +33,17 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
      */
     protected $auction;
 
+    /**
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $customerSession;
+
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         PriceCurrencyInterface $priceCurrency,
         \Magento\Framework\Stdlib\ArrayUtils $arrayUtils,
         \Angel\Auction\Model\Auction $auction,
+        \Magento\Customer\Model\Session $customerSession,
         array $data = []
     ){
         parent::__construct($context, $arrayUtils, $data);
@@ -45,6 +51,7 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
         $this->_request = $context->getRequest();
         $this->_urlBuilder = $context->getUrlBuilder();
         $this->auction = $auction;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -77,6 +84,22 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
             $this->auction->init($this->getProduct());
         }
         return $this->auction;
+    }
+
+    public function isHightest(){
+        return $this->getAuction()->isHightest();
+    }
+
+    public function isFinished(){
+        return $this->getAuction()->isFinished();
+    }
+
+    public function isProcessing(){
+        return $this->getAuction()->isProcessing();
+    }
+
+    public function isNotStart(){
+        return $this->getAuction()->isNotStart();
     }
 
     public function getTimeLeft(){
@@ -130,7 +153,11 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
     }
 
     public function isBidAble(){
-        return true;
+        return $this->customerSession->isLoggedIn() && $this->isProcessing();
+    }
+
+    public function isLoggedIn(){
+
     }
 
     public function isStarted(){
