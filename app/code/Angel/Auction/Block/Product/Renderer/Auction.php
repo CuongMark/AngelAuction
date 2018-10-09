@@ -157,7 +157,7 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
     }
 
     public function isLoggedIn(){
-
+        return $this->customerSession->isLoggedIn();
     }
 
     public function isStarted(){

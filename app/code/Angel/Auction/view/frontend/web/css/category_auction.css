@@ -1,3 +1,6 @@
 .category-auction-box{
     text-align: center;
 }
+.unavailable, .tocompare, .towishlist{
+    display: none;
+}

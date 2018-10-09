@@ -310,7 +310,8 @@ class Auction
                 return $product;
             case Product\Attribute\Source\Status::PROCESSING:
                 if ($now->getTimestamp() >= $end->getTimestamp()){
-                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED);
+                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED)
+                        ->setCategoryIds([]);
                     $this->productRepository->save($product);
 
                     $bid = $this->getLastestBid();
