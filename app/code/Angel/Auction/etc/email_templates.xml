@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2017 Magestore. All rights reserved.
+  ~ See COPYING.txt for license details.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="auction_email_new_bid" label="Auction New Bid" file="new_bid.html" type="html" module="Angel_Auction" area="frontend"/>
+    <template id="auction_email_auction_finished" label="Auction Finished" file="finished.html" type="html" module="Angel_Auction" area="frontend"/>
+    <template id="auction_email_winning" label="Auction Winning" file="winning.html" type="html" module="Angel_Auction" area="frontend"/>
+    <template id="auction_email_auction_canceled" label="Auction Canceled" file="canceled.html" type="html" module="Angel_Auction" area="frontend"/>
+    <template id="auction_email_over_bid" label="Auction Bid overed" file="over_bid.html" type="html" module="Angel_Auction" area="frontend"/>
+</config>

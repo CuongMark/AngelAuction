@@ -62,6 +62,11 @@ class Auction
      */
     protected $customerSession;
 
+    /**
+     * @var EmailNotificationFactory
+     */
+    protected $emailNotificationFactory;
+
     public function __construct(
         \Angel\Auction\Model\ResourceModel\Bid\CollectionFactory $bidCollectionFactory,
         \Angel\Auction\Model\BidFactory $bidFactory,
@@ -71,7 +76,8 @@ class Auction
         \Angel\Auction\Model\AutoBidRepository $autoBidRepository,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        \Angel\Auction\Model\EmailNotificationFactory $emailNotificationFactory
     ){
         $this->bidCollectionFactory = $bidCollectionFactory;
         $this->bidFactory = $bidFactory;
@@ -82,6 +88,7 @@ class Auction
         $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->customerSession = $customerSession;
+        $this->emailNotificationFactory = $emailNotificationFactory;
     }
 
     public function init($product){
@@ -209,12 +216,17 @@ class Auction
      * @return \Angel\Auction\Api\Data\BidInterface
      */
     public function createNewBid($customerId, $price){
+        $lastBid = $this->getLastestBid();
         /** @var Bid $bid */
         $bid = $this->bidFactory->create();
         $bid->setProductId($this->getProduct()->getId())
             ->setCustomerId($customerId)
             ->setPrice($price)
             ->setStatus(Bid::BID_PENDING);
+        $this->emailNotificationFactory->create()->sentNewBidNotificatuon($bid);
+        if ($lastBid->getId()){
+            $this->emailNotificationFactory->create()->sentOverBidNotifycation($lastBid, $bid);
+        }
         return $this->bidRepository->save($bid);
     }
 
@@ -278,9 +290,8 @@ class Auction
         if (!$product) {
             $product = $this->getProduct();
         }
-        if (!$product || $product->getTypeId()
-            != Product\Type::TYPE_CODE ||
-            !$product->getData(self::STATUS_FIELD) ||
+        if (!$product || $product->getTypeId() != Product\Type::TYPE_CODE ||
+            $product->getData(self::STATUS_FIELD)==null || $product->getData(self::START_TIME_FIELD) == null  || $product->getData(self::END_TIME_FIELD) == null ||
             !in_array($product->getData(self::STATUS_FIELD),[Product\Attribute\Source\Status::NOT_START, Product\Attribute\Source\Status::PROCESSING])){
             return null;
         }
@@ -306,6 +317,7 @@ class Auction
                     if ($bid->getId()) {
                         $bid->setStatus(Bid::BID_WON);
                         $this->bidRepository->save($bid);
+                        $this->emailNotificationFactory->create()->sentAuctionWinningNotification($bid);
                     }
 
 

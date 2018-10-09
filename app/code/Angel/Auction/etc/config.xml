@@ -3,8 +3,15 @@
 	<default>
 		<auction>
 			<general>
-				<enable/>
+				<enable>1</enable>
 			</general>
+			<email>
+				<new_bid>auction_email_new_bid</new_bid>
+				<winning>auction_email_winning</winning>
+				<auction_finished>auction_email_auction_finished</auction_finished>
+				<auction_canceled>auction_email_auction_canceled</auction_canceled>
+				<over_bid>auction_email_over_bid</over_bid>
+			</email>
 		</auction>
 	</default>
 </config>

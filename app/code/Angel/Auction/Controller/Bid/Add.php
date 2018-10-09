@@ -3,7 +3,7 @@
 
 namespace Angel\Auction\Controller\Bid;
 
-use Angel\Auction\Model\Product\Type as Auction;
+use Angel\Auction\Model\Auction as Auction;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 
 class Add extends \Angel\Auction\Controller\Bid\Bid

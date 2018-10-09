@@ -2,7 +2,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 	<head>
 		<css src="Angel_Auction::css/countdown/timebox.css"/>
-		<css src="Angel_Auction::css/countdown/category_auction.css"/>
+		<css src="Angel_Auction::css/category_auction.css"/>
 	</head>
 	<body>
 		<referenceBlock name="category.product.type.details.renderers">

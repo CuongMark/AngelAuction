@@ -16,6 +16,34 @@
 					<source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
 				</field>
 			</group>
+			<group id="email" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Email Notification</label>
+				<field id="new_bid" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+					<label>New Bid</label>
+					<comment>Email template to notify new bid created.</comment>
+					<source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+				</field>
+				<field id="winning" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+					<label>Winning</label>
+					<comment>Email template to notify win auction.</comment>
+					<source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+				</field>
+				<field id="over_bid" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+					<label>Over Bid</label>
+					<comment>Email template to notify that someone placed a new bid greater than your.</comment>
+					<source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+				</field>
+				<!--<field id="auction_finished" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">-->
+					<!--<label>Auction Finished</label>-->
+					<!--<comment>Email Notify that the auction was finished.</comment>-->
+					<!--<source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>-->
+				<!--</field>-->
+				<!--<field id="auction_canceled" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">-->
+					<!--<label>Auction Canceled</label>-->
+					<!--<comment>Email template notify that the auction was canceled.</comment>-->
+					<!--<source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>-->
+				<!--</field>-->
+			</group>
 		</section>
 	</system>
 </config>

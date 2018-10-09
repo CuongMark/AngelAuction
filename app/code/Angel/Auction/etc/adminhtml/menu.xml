@@ -3,6 +3,6 @@
 	<menu>
 		<add id="Angel::auction_top_level" module="Angel_Auction" resource="Angel_Auction::auction" sortOrder="10" title="Auction"/>
 		<add action="angel_auction/auction/index" id="Angel_Auction::auction" module="Angel_Auction" parent="Angel::auction_top_level" resource="Angel_Auction::auction" sortOrder="1" title="Auction"/>
-		<add action="admin/system_config/edit/section/auction" id="Angel_Auction::setting" module="Angel_Auction" parent="Angel::auction_top_level" resource="Angel_Auction::config_angel_auction" sortOrder="10" title="Setting"/>
+		<add action="adminhtml/system_config/edit/section/auction" id="Angel_Auction::setting" module="Angel_Auction" parent="Angel::auction_top_level" resource="Angel_Auction::config_angel_auction" sortOrder="10" title="Setting"/>
 	</menu>
 </config>

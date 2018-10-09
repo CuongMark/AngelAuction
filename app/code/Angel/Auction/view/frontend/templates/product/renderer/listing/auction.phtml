@@ -7,5 +7,13 @@
     <?php if ($block->isProcessing()): ?>
         <div data-mage-init='{"angel/countdown": {"time_left":<?= $block->getTimeLeft() ?>}}'></div>
     <?php endif; ?>
-    <?= $block->getCurrentBidPriceFormated() ?>
+    <div class="auction-current-bid"><?= $block->getCurrentBidPriceFormated() ?></div>
+    <form data-role="bid-form" action="<?= /* @NoEscape */ $block->getProduct()->getProductUrl() ?>" method="get">
+        <?= $block->getBlockHtml('formkey') ?>
+        <button type="submit"
+                title="<?= __('Bid') ?>"
+                class="action tocart primary">
+            <span><?= /* @escapeNotVerified */ __('Bid') ?></span>
+        </button>
+    </form>
 </div>
