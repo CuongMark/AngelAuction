@@ -33,24 +33,29 @@ class Add extends \Angel\Auction\Controller\Bid\Bid
     public function execute(){
         $result = $this->_resultJsonFactory->create();
         if (!$this->_formKeyValidator->validate($this->getRequest())) {
+            $this->messageManager->addErrorMessage(__('Invalid form key!'));
             return $result->setData([['error'=>__('Invalid form key!')]]);
         }
 
         $product = $this->_initProduct();
         if (!$product){
+            $this->messageManager->addErrorMessage(__('Auction product does not exist!'));
             return $result->setData([['error'=>__('Auction product does not exist!')]]);
         }
         /** @var \Angel\Auction\Model\Product\Type $productInstance */
         $productInstance = $product->getTypeInstance();
         if (!$productInstance->isProcessing($product)){
+            $this->messageManager->addErrorMessage(__('Unable to bid this auctions!'));
             return $result->setData([['error'=>__('Unable to bid this auctions!')]]);
         }
 
         $price = $this->getRequest()->getParam('price');
         if(!is_numeric($price)){
+            $this->messageManager->addErrorMessage(__('The price is not numberic.'));
             return $result->setData(['error' => __('The price is not numberic.')]);
         }
         if(!$price || $price>=100000000||$price<=0){
+            $this->messageManager->addErrorMessage(__('The price is invalid.'));
             return $result->setData(['error' => __('The price is invalid.')]);
         }
 
@@ -58,21 +63,27 @@ class Add extends \Angel\Auction\Controller\Bid\Bid
          * check the price is larger Min next price
          */
         if($price < $product->getData(Auction::MIN_INTERVAL_FIELD)){
+            $this->messageManager->addErrorMessage(_('The bid need greater than %1.', $product->getData(Auction::MIN_INTERVAL_FIELD)));
             return $result->setData(['error' => __('The bid need greater than %1.', $product->getData(Auction::MIN_INTERVAL_FIELD))]);
         }
 
-        if($product->getData(Auction::MAX_INTERVAL_FIELD) && $price > $product->getData(Auction::MAX_INTERVAL_FIELD)){
-            return $result->setData(['error' => __('The bid need less than %1.', $product->getData(Auction::MAX_INTERVAL_FIELD))]);
-        }
 
         $this->auction->init($product);
+
+        if($product->getData(Auction::MAX_INTERVAL_FIELD) && $price > $this->auction->getNextMaxBidPrice()){
+            $this->messageManager->addErrorMessage(__('The bid need less than %1.', $this->auction->getNextMaxBidPrice()));
+            return $result->setData(['error' => __('The bid need less than %1.', $this->auction->getNextMaxBidPrice())]);
+        }
+
         $customer = $this->customerSession->getCustomer();
         if (!$customer->getId()){
+            $this->messageManager->addErrorMessage(__('You are out of session. Please login again'));
             return $result->setData(['error' => __('You are out of session. Please login again')]);
         }
 
         $lastestBid = $this->auction->getLastestBid();
         if ($lastestBid->getId() && $lastestBid->getCustomerId() == $customer->getId() && !$this->getRequest()->getParam('isAutoBid')){
+            $this->messageManager->addErrorMessage(__('You are the hightest bid!'));
             return $result->setData(['error' => __('You are the hightest bid!')]);
         }
 
@@ -83,6 +94,7 @@ class Add extends \Angel\Auction\Controller\Bid\Bid
         }
 
         $this->auction->checkAutoBid();
+        $this->messageManager->addSuccessMessage(__('You placed a bid success'));
         return $result->setData(['success' => __('You placed a bid success')]);
     }
 }

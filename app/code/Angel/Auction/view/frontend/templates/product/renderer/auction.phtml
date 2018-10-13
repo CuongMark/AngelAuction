@@ -9,8 +9,8 @@
     <?php endif; ?>
     <li>
         <div class="left-title"><span><?= __('Current Bid: ') ?></span> </div><div><?= $block->getCurrentBidPriceFormated() ?>
-            <?php if ($block->isHightest()): ?>
-                <?= __('(You)') ?>
+            <?php if ($bidderName = $block->lastBidderName()): ?>
+                (<?=  $bidderName ?>)
             <?php endif; ?>
         </div>
     </li>
@@ -40,6 +40,7 @@
                            value="<?= /* @escapeNotVerified */ $block->getNextMinBidPrice() * 1 ?>"
                            title="<?= /* @escapeNotVerified */ __('Bid Price') ?>"
                            class="input-text bid-price qty"
+                           step="0.01"
                            data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
                     />
                 </div>

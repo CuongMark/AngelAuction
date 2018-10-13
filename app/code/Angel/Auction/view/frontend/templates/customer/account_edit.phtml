@@ -1,0 +1,10 @@
+<?php /** @var \Angel\Auction\Block\Product\Renderer\Auction $block */ ?>
+<fieldset class="fieldset bidder_name" data-container="bidder_name">
+    <legend class="legend"><span data-title="bidder_name"><?= $block->escapeHtml(__('Auction')) ?></span></legend><br>
+    <div class="field password current required">
+        <label class="label" for="bidder_name"><span><?= $block->escapeHtml(__('Bidder Name')) ?></span></label>
+        <div class="control">
+            <input type="text" class="input-text" name="bidder_name" id="bidder_name" value="<?= $block->getBidderName() ?>" autocomplete="off" />
+        </div>
+    </div>
+</fieldset>

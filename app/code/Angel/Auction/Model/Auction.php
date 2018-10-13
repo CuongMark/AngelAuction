@@ -283,7 +283,7 @@ class Auction
     }
 
     /**
-     * @param \Magento\Catalog\Model\Product|null $product
+     * @param null $product
      * @return \Magento\Catalog\Model\Product|null
      */
     public function updateStatus($product = null){
@@ -293,7 +293,7 @@ class Auction
         if (!$product || $product->getTypeId() != Product\Type::TYPE_CODE ||
             $product->getData(self::STATUS_FIELD)==null || $product->getData(self::START_TIME_FIELD) == null  || $product->getData(self::END_TIME_FIELD) == null ||
             !in_array($product->getData(self::STATUS_FIELD),[Product\Attribute\Source\Status::NOT_START, Product\Attribute\Source\Status::PROCESSING])){
-            return null;
+            return $product;
         }
         $now = new \DateTime();
         $start = new \DateTime($product->getData(self::START_TIME_FIELD));
@@ -310,9 +310,11 @@ class Auction
                 return $product;
             case Product\Attribute\Source\Status::PROCESSING:
                 if ($now->getTimestamp() >= $end->getTimestamp()){
-                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED)
-                        ->setCategoryIds([]);
+                    $product->setData(self::STATUS_FIELD, Product\Attribute\Source\Status::FINISHED);
                     $this->productRepository->save($product);
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $CategoryLinkRepository = $objectManager->get('\Magento\Catalog\Api\CategoryLinkManagementInterface');
+                    $CategoryLinkRepository->assignProductToCategories($product->getSku(), []);
 
                     $bid = $this->getLastestBid();
                     if ($bid->getId()) {

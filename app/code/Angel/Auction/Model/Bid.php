@@ -4,6 +4,8 @@
 namespace Angel\Auction\Model;
 
 use Angel\Auction\Api\Data\BidInterface;
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Model\CustomerFactory;
 
 class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
 {
@@ -14,6 +16,35 @@ class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
     const BID_CANCELED = 4;
 
     protected $_eventPrefix = 'angel_auction_bid';
+
+    /**
+     * @var \Magento\Customer\Model\Customer
+     */
+    protected $customer;
+
+    /**
+     * @var CustomerFactory
+     */
+    protected $_customerFactory;
+
+    /**
+     * @var CustomerRepositoryInterface
+     */
+    protected $customerRepository;
+
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        CustomerRepositoryInterface $customerRepository,
+        CustomerFactory $customerFactory,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ){
+        $this->customerRepository = $customerRepository;
+        $this->_customerFactory = $customerFactory;
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+    }
 
     /**
      * @return void
@@ -38,6 +69,16 @@ class Bid extends \Magento\Framework\Model\AbstractModel implements BidInterface
             default:
                 return __('Pending');
         }
+    }
+
+    /**
+     * @return \Magento\Customer\Model\Customer
+     */
+    public function getCustomer(){
+        if (!isset($this->customer) && $this->getCustomerId()){
+            $this->customer = $this->_customerFactory->create()->load($this->getCustomerId());
+        }
+        return $this->customer;
     }
 
     /**

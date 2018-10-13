@@ -144,8 +144,11 @@ class EmailNotification implements EmailNotificationInterface{
             ->setFrom($this->scopeConfig->getValue($sender, 'store', $storeId))
             ->addTo($email, $this->customerViewHelper->getCustomerName($customer))
             ->getTransport();
+        try {
+            $transport->sendMessage();
+        } catch (\Exception $e) {
 
-        $transport->sendMessage();
+        }
     }
 
     /**

@@ -37,15 +37,22 @@ class General extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
     private $localeCurrency;
 
     /**
+     * @var \Angel\Auction\Model\AuctionFactory
+     */
+    protected $auctionFactory;
+
+    /**
      * @param LocatorInterface $locator
      * @param ArrayManager $arrayManager
      */
     public function __construct(
         LocatorInterface $locator,
-        ArrayManager $arrayManager
+        ArrayManager $arrayManager,
+        \Angel\Auction\Model\AuctionFactory $auctionFactory
     ) {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;
+        $this->auctionFactory = $auctionFactory;
     }
 
     /**
@@ -69,12 +76,16 @@ class General extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
             return $meta;
         }
         $meta = $this->customizeNewDateRangeField($meta);
-        $meta = $this->customizeAuctionStatusField($meta);
-        if ($product->getData(Auction::STATUS_FIELD) != \Angel\Auction\Model\Product\Attribute\Source\Status::NOT_START){
-            $this->customizeAuctionStartTimeField($meta);
-        }
-        if ($product->getData(Auction::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::FINISHED){
-            $this->customizeAuctionEndTimeField($meta);
+        /** @var \Angel\Auction\Model\Auction $auction */
+        $auction = $this->auctionFactory->create();
+        if ($auction->init($product)->getBids()->getSize()) {
+            $meta = $this->customizeAuctionStatusField($meta);
+            if ($product->getData(Auction::STATUS_FIELD) != \Angel\Auction\Model\Product\Attribute\Source\Status::NOT_START) {
+                $this->customizeAuctionStartTimeField($meta);
+            }
+            if ($product->getData(Auction::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::FINISHED) {
+                $this->customizeAuctionEndTimeField($meta);
+            }
         }
         return $meta;
     }

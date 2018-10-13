@@ -90,6 +90,22 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
         return $this->getAuction()->isHightest();
     }
 
+    public function lastBidderName(){
+        if ($this->isHightest()){
+            return __('You');
+        } else if ($lastBid = $this->getAuction()->getLastestBid()){
+            $customer = $lastBid->getCustomer();
+            if ($customer) {
+                if ($customer->getBidderName()) {
+                    return $customer->getBidderName();
+                } else {
+                    return $customer->getFirstname();
+                }
+            }
+        }
+        return false;
+    }
+
     public function isFinished(){
         return $this->getAuction()->isFinished();
     }
@@ -123,12 +139,19 @@ class Auction extends \Magento\Catalog\Block\Product\View\AbstractView
     }
 
     /**
+     * @return string|null
+     */
+    public function getBidderName(){
+        return $this->customerSession->getCustomer()->getBidderName();
+    }
+
+    /**
      * @return \Magento\Framework\Phrase
      */
     public function getSuggess(){
-        if ($this->getNextMaxBidPrice())
-            return __('Your bid must be equal or greater than %1 and less or equal than %2',$this->priceCurrency->format($this->getNextMinBidPrice()), $this->priceCurrency->format($this->getNextMaxBidPrice()));
-        else
+//        if ($this->getNextMaxBidPrice())
+//            return __('Your bid must be equal or greater than %1 and less or equal than %2',$this->priceCurrency->format($this->getNextMinBidPrice()), $this->priceCurrency->format($this->getNextMaxBidPrice()));
+//        else
             return __('Your bid must be equal or greater than %1', $this->priceCurrency->format($this->getNextMinBidPrice()));
     }
 

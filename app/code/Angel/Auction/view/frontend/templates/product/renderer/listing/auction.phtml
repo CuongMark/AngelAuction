@@ -4,13 +4,15 @@
  */
 ?>
 <div class="category-auction-box">
-    <?php if ($block->isProcessing()): ?>
+    <?php if ($block->isProcessing()) : ?>
         <div data-mage-init='{"angel/countdown": {"time_left":<?= $block->getTimeLeft() ?>}}'></div>
+        <div class="auction-current-bid"><?= $block->getCurrentBidPriceFormated() ?><?= $block->lastBidderName()?'('.$block->lastBidderName().')':'' ?></div>
+        <form data-role="bid-form" action="<?= /* @NoEscape */ $block->isLoggedIn()?$block->getProduct()->getProductUrl():$block->getUrl('customer/account/login') ?>" method="get">
+            <?= $block->getBlockHtml('formkey') ?>
+            <button type="submit" title="<?= __('Bid') ?>" class="action tocart primary"><span><?= /* @escapeNotVerified */ $block->isLoggedIn()?__('Bid'):__('Login to Bid') ?></span>
+            </button>
+        </form>
+    <?php elseif ($block->isFinished()) : ?>
+        <div class="auction-current-bid"><?= $block->getCurrentBidPriceFormated() ?><?= $block->lastBidderName()?'('.$block->lastBidderName().')':'' ?></div>
     <?php endif; ?>
-    <div class="auction-current-bid"><?= $block->getCurrentBidPriceFormated() ?></div>
-    <form data-role="bid-form" action="<?= /* @NoEscape */ $block->isLoggedIn()?$block->getProduct()->getProductUrl():$block->getUrl('customer/account/login') ?>" method="get">
-        <?= $block->getBlockHtml('formkey') ?>
-        <button type="submit" title="<?= __('Bid') ?>" class="action tocart primary"><span><?= /* @escapeNotVerified */ $block->isLoggedIn()?__('Bid'):__('Login to Bid') ?></span>
-        </button>
-    </form>
 </div>

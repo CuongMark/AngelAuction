@@ -3,6 +3,9 @@
 
 namespace Angel\Auction\Observer\Catalog;
 
+use Angel\Auction\Model\Auction;
+use Angel\Auction\Model\Product\Attribute\Source\Status;
+
 class ControllerCategoryInitAfter implements \Magento\Framework\Event\ObserverInterface
 {
 
@@ -32,7 +35,9 @@ class ControllerCategoryInitAfter implements \Magento\Framework\Event\ObserverIn
         /** @var \Magento\Catalog\Model\Category $category */
         $category = $observer->getEvent()->getCategory();
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $products */
-        $products = $category->getProductCollection();
+        $products = clone $category->getProductCollection()
+            ->addAttributeToSelect([Auction::START_TIME_FIELD, Auction::END_TIME_FIELD, Auction::STATUS_FIELD ])
+            ->addAttributeToFilter(Auction::STATUS_FIELD,['in' => [Status::NOT_START, Status::PROCESSING]]);
         /** @var \Magento\Catalog\Model\Product $_product */
         foreach ($products as $_product){
             if ($_product->getTypeId() == \Angel\Auction\Model\Product\Type::TYPE_CODE){
