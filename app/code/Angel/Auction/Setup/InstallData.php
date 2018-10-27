@@ -26,7 +26,7 @@ class InstallData implements InstallDataInterface
         /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $fieldList = [
-            'price',
+//            'price',
             'cost',
             'weight'
         ];

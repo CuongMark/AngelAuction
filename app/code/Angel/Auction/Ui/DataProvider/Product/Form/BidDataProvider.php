@@ -11,6 +11,7 @@ use Magento\Ui\DataProvider\AbstractDataProvider;
 use Angel\Auction\Model\ResourceModel\Bid\CollectionFactory;
 use Angel\Auction\Model\ResourceModel\Bid\Collection;
 use Magento\Review\Model\Review;
+use Magento\Framework\UrlInterface;
 
 /**
  * Class ReviewDataProvider
@@ -35,6 +36,11 @@ class BidDataProvider extends AbstractDataProvider
     protected $request;
 
     /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
+    /**
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
@@ -49,6 +55,7 @@ class BidDataProvider extends AbstractDataProvider
         $requestFieldName,
         CollectionFactory $collectionFactory,
         RequestInterface $request,
+        UrlInterface $urlBuilder,
         array $meta = [],
         array $data = []
     ) {
@@ -56,6 +63,7 @@ class BidDataProvider extends AbstractDataProvider
         $this->collectionFactory = $collectionFactory;
         $this->collection = $this->collectionFactory->create();
         $this->request = $request;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -81,6 +89,11 @@ class BidDataProvider extends AbstractDataProvider
         foreach ($this->getCollection() as $item) {
             $arrItems['items'][] = $item->toArray([]);
         }
+
+        $configData = $this->getConfigData();
+        $configData['update_url'] = $this->urlBuilder->getUrl('mui/index/render', ['current_product_id' => $this->request->getParam('current_product_id')]);
+        $this->setConfigData($configData);
+
         return $arrItems;
     }
 

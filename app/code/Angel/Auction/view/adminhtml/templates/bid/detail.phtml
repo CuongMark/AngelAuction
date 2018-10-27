@@ -1,0 +1,19 @@
+<?php
+    /** @var \Angel\Auction\Block\AdminHtml\Bid $block */
+ ?>
+
+<h2><?= __('Bid Information') ?></h2>
+<?php $bid = $block->getBid(); ?>
+<ul class="bid-information">
+    <li><div class="bid_info_label"><?= __('Bid Id:') ?></div><span><?= $bid->getBidId() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Created At:') ?></div><span><?= $block->formatDate($block->getAuction()->getEndTime(), 2, true) ?></span></li>
+    <li><div class="bid_info_label"><?= __('Bid Price:') ?></div><span><?= $block->formatPrice($bid->getPrice()) ?></span></li>
+    <li><div class="bid_info_label"><?= __('Bid Status:') ?></div><span><?=$bid->getStatusLabel() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Customer Name:') ?></div><span><?= $block->getCustomer()->getFirstname() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Customer Bid Name:') ?></div><span><?= $block->getCustomer()->getCustomAttribute('bidder_name')->getValue() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Customer Email:') ?></div><span><?= $block->getCustomer()->getEmail() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Auction Name:') ?></div><span><?= $block->getAuction()->getProduct()->getName() ?></span></li>
+    <li><div class="bid_info_label"><?= __('Start At:') ?></div><span><?= $block->formatDate($block->getAuction()->getStartTime(), 2, true) ?></span></li>
+    <li><div class="bid_info_label"><?= __('End A:') ?></div><span><?= $block->formatDate($block->getAuction()->getEndTime(), 2, true) ?></span></li>
+    <li><div class="bid_info_label"><?= __('Auction Status:') ?></div><span><?= $block->getAuction()->getStatusLable() ?></span></li>
+</ul>

@@ -3,6 +3,7 @@
 
 namespace Angel\Auction\Model;
 
+use Angel\Auction\Model\Product\Attribute\Source\Status;
 use Angel\Auction\Model\Product\Type;
 
 class Auction
@@ -108,12 +109,26 @@ class Auction
         return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::PROCESSING;
     }
 
+    /**
+     * @return bool
+     */
     public function isFinished(){
         return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::FINISHED;
     }
 
+    /**
+     * @return bool
+     */
     public function isNotStart(){
         return $this->product->getData(self::STATUS_FIELD) == \Angel\Auction\Model\Product\Attribute\Source\Status::NOT_START;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatusLable(){
+        $auctionStatusOptions = Status::options();
+        return $auctionStatusOptions[$this->getProduct()->getData(self::STATUS_FIELD)]['label'];
     }
 
     /**
@@ -211,9 +226,10 @@ class Auction
 
 
     /**
-     * @param int $customerId
-     * @param float $price
+     * @param $customerId
+     * @param $price
      * @return \Angel\Auction\Api\Data\BidInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function createNewBid($customerId, $price){
         $lastBid = $this->getLastestBid();
@@ -234,6 +250,7 @@ class Auction
      * @param int $customerId
      * @param float $price
      * @return \Angel\Auction\Api\Data\AutoBidInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function createNewAutoBid($customerId, $price){
         /** @var AutoBid $autobid */
@@ -283,8 +300,26 @@ class Auction
     }
 
     /**
+     * @return mixed
+     */
+    public function getStartTime(){
+        return $this->getProduct()->getData(self::START_TIME_FIELD);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEndTime(){
+        return $this->getProduct()->getData(self::END_TIME_FIELD);
+    }
+
+    /**
      * @param null $product
      * @return \Magento\Catalog\Model\Product|null
+     * @throws \Magento\Framework\Exception\CouldNotSaveException
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\StateException
      */
     public function updateStatus($product = null){
         if (!$product) {

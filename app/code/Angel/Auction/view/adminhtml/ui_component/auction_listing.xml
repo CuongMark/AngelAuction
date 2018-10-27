@@ -100,11 +100,17 @@
                 <label translate="true">SKU</label>
             </settings>
         </column>
-        <column name="price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="70">
+        <column name="winner_email" sortOrder="65">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Winner</label>
+            </settings>
+        </column>
+        <column name="winning_price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="70">
             <settings>
                 <addField>true</addField>
                 <filter>textRange</filter>
-                <label translate="true">Price</label>
+                <label translate="true">Winning Price</label>
             </settings>
         </column>
         <column name="auction_start_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="50">
@@ -114,7 +120,7 @@
                 <label translate="true">Start Time</label>
             </settings>
         </column>
-        <column name="auction_start_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="60">
+        <column name="auction_end_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="60">
             <settings>
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
@@ -127,16 +133,7 @@
                 <options class="Angel\Auction\Model\Product\Attribute\Source\Status"/>
                 <filter>select</filter>
                 <dataType>select</dataType>
-                <label translate="true">Status</label>
-            </settings>
-        </column>
-        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="90">
-            <settings>
-                <addField>true</addField>
-                <options class="Magento\Catalog\Model\Product\Attribute\Source\Status"/>
-                <filter>select</filter>
-                <dataType>select</dataType>
-                <label translate="true">Status</label>
+                <label translate="true">Auction Status</label>
             </settings>
         </column>
         <actionsColumn name="actions" class="Magento\Catalog\Ui\Component\Listing\Columns\ProductActions" sortOrder="200">

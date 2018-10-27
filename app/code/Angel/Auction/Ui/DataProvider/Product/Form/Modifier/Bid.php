@@ -88,7 +88,7 @@ class Bid extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abstrac
                                 'externalProvider' => 'auction_bid.auction_bid',
                                 'selectionsProvider' => 'auction_bid.auction_bid.product_columns.ids',
                                 'ns' => 'auction_bid',
-                                'render_url' => $this->urlBuilder->getUrl('mui/index/render'),
+                                'render_url' => $this->urlBuilder->getUrl('mui/index/render', ['current_product_id' => $this->locator->getProduct()->getId()]),
                                 'realTimeLink' => false,
                                 'behaviourType' => 'simple',
                                 'externalFilterMode' => true,

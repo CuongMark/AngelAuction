@@ -88,7 +88,7 @@ class AutoBid extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Abs
                                 'externalProvider' => 'auction_autobid.auction_autobid',
                                 'selectionsProvider' => 'auction_autobid.auction_autobid.product_columns.ids',
                                 'ns' => 'auction_autobid',
-                                'render_url' => $this->urlBuilder->getUrl('mui/index/render'),
+                                'render_url' => $this->urlBuilder->getUrl('mui/index/render', ['current_product_id' => $this->locator->getProduct()->getId()]),
                                 'realTimeLink' => false,
                                 'behaviourType' => 'simple',
                                 'externalFilterMode' => true,

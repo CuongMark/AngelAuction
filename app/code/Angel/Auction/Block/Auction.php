@@ -80,7 +80,8 @@ class Auction extends \Magento\Framework\View\Element\Template
             ->getAttributeId();
         $collection->getSelect()->joinLeft(['product_varchar' => $collection->getTable('catalog_product_entity_varchar')],
             "product_varchar.entity_id = main_table.product_id AND product_varchar.attribute_id = $productNameAttributeId", []
-        )->columns(['name' => 'product_varchar.value']);
+        )->columns(['name' => 'product_varchar.value'])
+        ->group('main_table.bid_id');
         return $collection;
     }
 

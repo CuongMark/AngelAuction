@@ -1,0 +1,9 @@
+.bid-information{
+    list-style: none;
+}
+
+.bid-information .bid_info_label{
+    min-width: 150px;
+    float: left;
+    font-weight: bold;
+}

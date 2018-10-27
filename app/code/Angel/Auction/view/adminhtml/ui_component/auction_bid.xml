@@ -103,5 +103,10 @@
                 <label translate="true">Status</label>
             </settings>
         </column>
+        <actionsColumn name="actions" class="Angel\Auction\Ui\Component\Listing\Columns\BidActions" sortOrder="200">
+            <settings>
+                <indexField>entity_id</indexField>
+            </settings>
+        </actionsColumn>
     </columns>
 </listing>

@@ -42,6 +42,15 @@ class Status extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
         return $this->_options;
     }
 
+    static function options(){
+        return [
+            ['value' => self::NOT_START, 'label' => __('Not Start')],
+            ['value' => self::PROCESSING, 'label' => __('Processing')],
+            ['value' => self::FINISHED, 'label' => __('Finished')],
+            ['value' => self::CANCEL, 'label' => __('Canceled')]
+        ];
+    }
+
     /**
      * @return array
      */
