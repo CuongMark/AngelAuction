@@ -71,12 +71,7 @@ class AutoBidRepository implements AutoBidRepositoryInterface
     public function save(
         \Angel\Auction\Api\Data\AutoBidInterface $autoBid
     ) {
-        /* if (empty($autoBid->getStoreId())) {
-            $storeId = $this->storeManager->getStore()->getId();
-            $autoBid->setStoreId($storeId);
-        } */
         try {
-            $autoBid->setCreatedTime('2018/10/05 00:00:00');
             $this->resource->save($autoBid);
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__(

@@ -284,7 +284,9 @@ class Auction
             $autoBidBiger = $autoBids->getFirstItem();
             /** @var AutoBid $autoBidSmaller */
             $autoBidSmaller = $autoBids->getLastItem();
-            if ($autoBidBiger->getPrice() == $autoBidSmaller->getPrice()){
+            if ($lastBid->getCustomerId()==$autoBidBiger->getCustomerId() && $lastBid->getCustomerId()==$autoBidSmaller->getCustomerId()){
+                return false;
+            } else if ($autoBidBiger->getPrice() == $autoBidSmaller->getPrice()){
                 if ($autoBidBiger->getId() > $autoBidSmaller->getPrice()){
                     return $this->createNewBid($autoBidSmaller->getCustomerId(), $autoBidSmaller->getPrice());
                 } else {
